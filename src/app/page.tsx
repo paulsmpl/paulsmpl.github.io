@@ -19,6 +19,9 @@ const COLORS = [
 
 export default function Home() {
   const [color, setColor] = useState<string>(COLORS[3]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [content, setContent] = useState<string>("");
+  const [author, setAuthor] = useState<string>("");
 
   const onChangeColor = (_color: string) => {
     setColor(_color);
@@ -29,17 +32,42 @@ export default function Home() {
     const _color = localStorage.getItem("color");
     if (_color) {
       setColor(_color);
+    } else {
+      setColor(COLORS[3]);
     }
+  }, []);
+
+  const getRandomQuote = () => {
+    setLoading(true);
+    fetch("https://api.quotable.io/random")
+      .then((res) => res.json())
+      .then((result) => {
+        setContent(result.content);
+        setAuthor(`_ ${result.author}`);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    getRandomQuote();
   }, []);
 
   return (
     <main
-      className="flex min-h-screen flex-col items-center justify-between relative bg-[${color}]"
+      className="flex min-h-screen flex-col items-center justify-between relative"
       style={{ backgroundColor: color }}
     >
       <Header />
-      <Content color={color} />
-      <Colors colors={COLORS} onChangeColor={onChangeColor} />{" "}
+      <Content
+        color={color}
+        loading={loading}
+        content={content}
+        author={author}
+        getRandomQuote={getRandomQuote}
+      />
+      <Colors colors={COLORS} onChangeColor={onChangeColor} />
       <ToastContainer />
     </main>
   );

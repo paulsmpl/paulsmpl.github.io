@@ -9,26 +9,18 @@ import {
   logoTwitter,
   volumeMediumOutline,
 } from "ionicons/icons";
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 type Props = {
   color: string;
-};
-
-const defaultData = {
-  content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi
-  blanditiis, repellendus sunt temporibus adipisci debitis
-  accusantium`,
-  author: "_ John Doe",
+  loading: boolean;
+  content: string;
+  author: string;
+  getRandomQuote: () => void;
 };
 
 const Content = (props: Props) => {
-  const { color } = props;
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [content, setContent] = useState<string>(defaultData?.content);
-  const [author, setAuthor] = useState<string>(defaultData?.author);
+  const { color, loading, content, author, getRandomQuote } = props;
 
   const quoteToSpeech = () => {
     const utterance = new SpeechSynthesisUtterance(
@@ -58,23 +50,6 @@ const Content = (props: Props) => {
       icon: true,
     });
   };
-
-  const getRandomQuote = () => {
-    setLoading(true);
-    fetch("https://api.quotable.io/random")
-      .then((res) => res.json())
-      .then((result) => {
-        setContent(result.content);
-        setAuthor(`_ ${result.author}`);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    getRandomQuote();
-  }, []);
 
   return (
     <div className="flex h-screen">
