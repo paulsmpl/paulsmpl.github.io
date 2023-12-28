@@ -13,9 +13,10 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [color, setColor] = useState<string>(COLORS[3]);
   const [localColor, setLocalColor] = useLocalStorage(LOCAL_KEY.COLOR, color);
-  const [count, { startCountdown, resetCountdown }] = useCountdown({
-    countStart: 10,
-  });
+  const [count, { startCountdown, stopCountdown, resetCountdown }] =
+    useCountdown({
+      countStart: 10,
+    });
   const [quotesHistory, setQuotesHistory] = useSessionStorage(
     SESSION_KEY.QUOTES,
     ""
@@ -23,6 +24,7 @@ export default function Home() {
   const [indexQuotesHistory, setIndexQuotesHistory] = useState<number>(
     quotesHistory ? JSON.parse(quotesHistory).length - 1 : 0
   );
+  const [pauseCountdown, setPauseCountdown] = useState<boolean>(false);
 
   const onChangeColor = (_color: string) => {
     setColor(_color);
@@ -51,29 +53,48 @@ export default function Home() {
 
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
-        if (quotesHistory && indexQuotesHistory > 0) {
-          const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
-          const _indexQuotesHistory = indexQuotesHistory - 1;
-          setQuote(_quotesHistory[_indexQuotesHistory]);
-          setIndexQuotesHistory(_indexQuotesHistory);
-        }
-      }
-      if (event.key === "ArrowRight") {
-        if (
-          quotesHistory &&
-          indexQuotesHistory < JSON.parse(quotesHistory).length - 1
-        ) {
-          const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
-          const _indexQuotesHistory = indexQuotesHistory + 1;
-          setQuote(_quotesHistory[_indexQuotesHistory]);
-          setIndexQuotesHistory(_indexQuotesHistory);
-        } else {
-          getRandomQuote();
-        }
+      switch (event.key) {
+        case "ArrowLeft":
+          if (quotesHistory && indexQuotesHistory > 0) {
+            const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
+            const _indexQuotesHistory = indexQuotesHistory - 1;
+            setQuote(_quotesHistory[_indexQuotesHistory]);
+            setIndexQuotesHistory(_indexQuotesHistory);
+          }
+          break;
+        case "ArrowRight":
+          if (
+            quotesHistory &&
+            indexQuotesHistory < JSON.parse(quotesHistory).length - 1
+          ) {
+            const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
+            const _indexQuotesHistory = indexQuotesHistory + 1;
+            setQuote(_quotesHistory[_indexQuotesHistory]);
+            setIndexQuotesHistory(_indexQuotesHistory);
+          } else {
+            getRandomQuote();
+          }
+          break;
+        case "d":
+          if (pauseCountdown) {
+            startCountdown();
+          } else {
+            stopCountdown();
+          }
+          setPauseCountdown(!pauseCountdown);
+          break;
+        default:
+          break;
       }
     },
-    [quotesHistory, indexQuotesHistory, getRandomQuote]
+    [
+      quotesHistory,
+      indexQuotesHistory,
+      getRandomQuote,
+      pauseCountdown,
+      startCountdown,
+      stopCountdown,
+    ]
   );
 
   useEffect(() => {
@@ -92,8 +113,7 @@ export default function Home() {
 
   useEffect(() => {
     getRandomQuote();
-    // TODO bo cmt
-    // startCountdown();
+    startCountdown();
   }, []);
 
   useEffect(() => {
