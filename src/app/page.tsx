@@ -4,6 +4,7 @@ import Content from "@/components/Content";
 import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
+import { useCountdown } from "usehooks-ts";
 
 const COLORS = [
   "hsl(345,80%,50%)",
@@ -18,6 +19,8 @@ const COLORS = [
 ];
 
 export default function Home() {
+  const [count, { startCountdown, stopCountdown, resetCountdown }] =
+    useCountdown({ countStart: 10 });
   const [color, setColor] = useState<string>(COLORS[3]);
   const [loading, setLoading] = useState<boolean>(true);
   const [content, setContent] = useState<string>("");
@@ -52,7 +55,16 @@ export default function Home() {
 
   useEffect(() => {
     getRandomQuote();
+    startCountdown();
   }, []);
+
+  useEffect(() => {
+    if (count === 0) {
+      getRandomQuote();
+      resetCountdown();
+      startCountdown();
+    }
+  }, [count]);
 
   return (
     <main
