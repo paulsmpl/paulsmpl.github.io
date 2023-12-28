@@ -1,4 +1,5 @@
 "use client";
+import { Quote } from "@/types/quote";
 import { faQuoteLeft, faQuoteRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IonIcon } from "@ionic/react";
@@ -15,29 +16,30 @@ import Search from "./Search";
 type Props = {
   color: string;
   loading: boolean;
-  content: string;
-  author: string;
+  quote: Quote | undefined;
   getRandomQuote: () => void;
 };
 
 const Content = (props: Props) => {
-  const { color, loading, content, author, getRandomQuote } = props;
+  const { color, loading, quote, getRandomQuote } = props;
 
   const quoteToSpeech = () => {
     const utterance = new SpeechSynthesisUtterance(
-      `${content} by ${author.replace("_", "")}`
+      `${quote?.content} by ${quote?.author}`
     );
     utterance.lang = "en-US";
     speechSynthesis.speak(utterance);
   };
 
   const onShareTwitter = () => {
-    const url = `https://www.twitter.com/intent/tweet?text=${content} By ${author}`;
+    const url = `https://www.twitter.com/intent/tweet?text=${
+      quote?.content
+    } By ${`_ ${quote?.author}`}`;
     window.open(url, "_blank");
   };
 
   const onCopy = () => {
-    navigator.clipboard.writeText(content);
+    navigator.clipboard.writeText(quote?.content ?? "");
     toast("Quote copied to clipboard", {
       position: "top-right",
       autoClose: 3000,
@@ -64,14 +66,14 @@ const Content = (props: Props) => {
           className="fas fa-quote-left w-[26px] h-[30px]"
         />
         <span className="text-[18px] sm:text-xl text-center mt-[10px] pl-5">
-          {content}
+          {quote?.content}
         </span>
         <FontAwesomeIcon
           icon={faQuoteRight}
           className="fas fa-quote-left w-[26px] h-[30px] self-end mt-[10px]"
         />
         <span className="mt-3 text-sm sm:text-[18px] italic text-end mb-5">
-          {author}
+          {`_ ${quote?.author}`}
         </span>
         <div className="flex flex-row items-center justify-between">
           <div className="grid grid-flow-col gap-x-5">

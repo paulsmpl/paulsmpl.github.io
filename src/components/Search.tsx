@@ -1,13 +1,9 @@
+import { Book } from "@/types/book";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { IonIcon } from "@ionic/react";
 import { search } from "ionicons/icons";
 import { Fragment, useState } from "react";
-
-type Book = {
-  id: number;
-  name: string;
-};
 
 const books = [
   { id: 1, name: "Opponent Of Silver" },

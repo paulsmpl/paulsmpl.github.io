@@ -2,41 +2,29 @@
 import Colors from "@/components/Colors";
 import Content from "@/components/Content";
 import Header from "@/components/Header";
+import { COLORS, LOCAL_KEY } from "@/constants";
+import { Quote } from "@/types/quote";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import { useCountdown } from "usehooks-ts";
-
-const COLORS = [
-  "hsl(345,80%,50%)",
-  "hsl(100,80%,50%)",
-  "hsl(200,80%,50%)",
-  "hsl(227,66%,55%)",
-  "hsl(26,80%,50%)",
-  "hsl(44,90%,51%)",
-  "hsl(280,100%,65%)",
-  "hsl(480,100%,25%)",
-  "hsl(180,100%,25%)",
-];
+import { useCountdown, useLocalStorage } from "usehooks-ts";
 
 export default function Home() {
-  const [count, { startCountdown, stopCountdown, resetCountdown }] =
-    useCountdown({ countStart: 10 });
-  const [color, setColor] = useState<string>(COLORS[3]);
+  const [quote, setQuote] = useState<Quote>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [content, setContent] = useState<string>("");
-  const [author, setAuthor] = useState<string>("");
+  const [color, setColor] = useState<string>(COLORS[3]);
+  const [localColor, setLocalColor] = useLocalStorage(LOCAL_KEY.COLOR, color);
+  const [count, { startCountdown, resetCountdown }] = useCountdown({
+    countStart: 10,
+  });
 
   const onChangeColor = (_color: string) => {
     setColor(_color);
-    localStorage.setItem("color", _color);
+    setLocalColor(_color);
   };
 
   useEffect(() => {
-    const _color = localStorage.getItem("color");
-    if (_color) {
-      setColor(_color);
-    } else {
-      setColor(COLORS[3]);
+    if (localColor) {
+      setColor(localColor);
     }
   }, []);
 
@@ -44,9 +32,8 @@ export default function Home() {
     setLoading(true);
     fetch("https://api.quotable.io/random")
       .then((res) => res.json())
-      .then((result) => {
-        setContent(result.content);
-        setAuthor(`_ ${result.author}`);
+      .then((_quote: Quote) => {
+        setQuote(_quote);
       })
       .finally(() => {
         setLoading(false);
@@ -75,11 +62,10 @@ export default function Home() {
       <Content
         color={color}
         loading={loading}
-        content={content}
-        author={author}
+        quote={quote}
         getRandomQuote={getRandomQuote}
       />
-      <Colors colors={COLORS} onChangeColor={onChangeColor} />
+      <Colors onChangeColor={onChangeColor} />
       <ToastContainer />
     </main>
   );
