@@ -13,3 +13,7 @@ export const COLORS = [
 export const LOCAL_KEY = {
   COLOR: "COLOR",
 };
+
+export const SESSION_KEY = {
+  QUOTES: "QUOTES",
+};
