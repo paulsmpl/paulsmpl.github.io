@@ -10,6 +10,7 @@ import {
   volumeMediumOutline,
 } from "ionicons/icons";
 import { toast } from "react-toastify";
+import Search from "./Search";
 
 type Props = {
   color: string;
@@ -57,6 +58,7 @@ const Content = (props: Props) => {
         <span className="text-3xl font-semibold text-center mb-5">
           Quotes Generator
         </span>
+        <Search />
         <FontAwesomeIcon
           icon={faQuoteLeft}
           className="fas fa-quote-left w-[26px] h-[30px]"
