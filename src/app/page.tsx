@@ -13,9 +13,10 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [color, setColor] = useState<string>(COLORS[3]);
   const [localColor, setLocalColor] = useLocalStorage(LOCAL_KEY.COLOR, color);
+  const [localCountDown] = useLocalStorage(LOCAL_KEY.COUNT_DOWN, "10");
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
     useCountdown({
-      countStart: 10,
+      countStart: Number(localCountDown),
     });
   const [quotesHistory, setQuotesHistory] = useSessionStorage(
     SESSION_KEY.QUOTES,

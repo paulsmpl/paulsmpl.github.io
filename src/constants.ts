@@ -12,6 +12,7 @@ export const COLORS = [
 
 export const LOCAL_KEY = {
   COLOR: "COLOR",
+  COUNT_DOWN: "COUNT_DOWN",
 };
 
 export const SESSION_KEY = {
