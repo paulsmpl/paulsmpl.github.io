@@ -32,7 +32,7 @@ export default function Home() {
     setLocalColor(_color);
   };
 
-  const getRandomQuote = () => {
+  const getRandomQuote = useCallback(() => {
     setLoading(true);
     fetch("https://api.quotable.io/random")
       .then((res) => res.json())
@@ -50,7 +50,7 @@ export default function Home() {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [quotesHistory, setQuotesHistory]);
 
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
@@ -110,12 +110,12 @@ export default function Home() {
     if (localColor) {
       setColor(localColor);
     }
-  }, []);
+  }, [localColor]);
 
   useEffect(() => {
     getRandomQuote();
     startCountdown();
-  }, []);
+  }, [getRandomQuote, startCountdown]);
 
   useEffect(() => {
     if (count === 0) {
@@ -123,7 +123,7 @@ export default function Home() {
       resetCountdown();
       startCountdown();
     }
-  }, [count]);
+  }, [count, getRandomQuote, resetCountdown, startCountdown]);
 
   return (
     <main
