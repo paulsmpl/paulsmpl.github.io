@@ -25,7 +25,7 @@ const Content = (props: Props) => {
 
   const quoteToSpeech = () => {
     const utterance = new SpeechSynthesisUtterance(
-      `${quote?.content} by ${quote?.author}`
+      `${quote?.quote} by ${quote?.author?.authorName}`
     );
     utterance.lang = "en-US";
     speechSynthesis.speak(utterance);
@@ -33,13 +33,13 @@ const Content = (props: Props) => {
 
   const onShareTwitter = () => {
     const url = `https://www.twitter.com/intent/tweet?text=${
-      quote?.content
-    } By ${`_ ${quote?.author}`}`;
+      quote?.quote
+    } By ${`_ ${quote?.author?.authorName}`}`;
     window.open(url, "_blank");
   };
 
   const onCopy = () => {
-    navigator.clipboard.writeText(quote?.content ?? "");
+    navigator.clipboard.writeText(quote?.quote ?? "");
     toast("Quote copied to clipboard", {
       position: "top-right",
       autoClose: 3000,
@@ -66,14 +66,14 @@ const Content = (props: Props) => {
           className="fas fa-quote-left w-[26px] h-[30px]"
         />
         <span className="text-[18px] sm:text-xl text-center mt-[10px] pl-5">
-          {quote?.content}
+          {quote?.quote}
         </span>
         <FontAwesomeIcon
           icon={faQuoteRight}
           className="fas fa-quote-left w-[26px] h-[30px] self-end mt-[10px]"
         />
         <span className="mt-3 text-sm sm:text-[18px] italic text-end mb-5">
-          {`_ ${quote?.author}`}
+          {`_ ${quote?.author?.authorName}`}
         </span>
         <div className="flex flex-row items-center justify-between">
           <div className="grid grid-flow-col gap-x-5">
