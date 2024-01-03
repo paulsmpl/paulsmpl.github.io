@@ -1,4 +1,7 @@
 export type Book = {
   id: number;
-  name: string;
+  bookName: string;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
 };

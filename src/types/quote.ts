@@ -1,10 +1,15 @@
+import { Author } from "./author";
+import { Book } from "./book";
+
 export type Quote = {
-  _id: string;
-  content: string;
-  author: string;
-  tags: string[];
-  authorSlug: string;
-  length: number;
-  dateAdded: string;
-  dateModified: string;
+  id: number;
+  authorId: number;
+  bookId: number;
+  quote: string;
+  position: number;
+  enabled: boolean;
+  author?: Author;
+  book?: Book;
+  createdAt: string;
+  updatedAt: string;
 };
