@@ -13,6 +13,7 @@ export const COLORS = [
 export const LOCAL_KEY = {
   COLOR: "COLOR",
   COUNT_DOWN: "COUNT_DOWN",
+  LAST_QUOTE: "LAST_QUOTE",
 };
 
 export const SESSION_KEY = {

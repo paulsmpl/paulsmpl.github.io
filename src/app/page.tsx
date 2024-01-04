@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import Colors from "@/components/Colors";
 import Content from "@/components/Content";
@@ -5,7 +6,7 @@ import Header from "@/components/Header";
 import { COLORS, LOCAL_KEY, SESSION_KEY } from "@/constants";
 import { Quote } from "@/types/quote";
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { useCountdown, useLocalStorage, useSessionStorage } from "usehooks-ts";
 
@@ -14,6 +15,10 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [color, setColor] = useState<string>(COLORS[3]);
   const [localColor, setLocalColor] = useLocalStorage(LOCAL_KEY.COLOR, color);
+  const [localLastQuote, setLocalLastQuote] = useLocalStorage(
+    LOCAL_KEY.LAST_QUOTE,
+    ""
+  );
   const [localCountDown] = useLocalStorage(LOCAL_KEY.COUNT_DOWN, "10");
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
     useCountdown({
@@ -33,10 +38,18 @@ export default function Home() {
     setLocalColor(_color);
   };
 
-  const getRandomQuote = useCallback(() => {
+  const getRandomQuote = () => {
     setLoading(true);
+    let params = {};
+
+    if (localLastQuote) {
+      params = {
+        ...params,
+        currerntQuoteId: JSON.parse(localLastQuote)?.id,
+      };
+    }
     axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/quote/random`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/quote/random`, { params })
       .then((res) => {
         if (res.status === 200) {
           setQuote(res.data);
@@ -58,53 +71,43 @@ export default function Home() {
       .finally(() => {
         setLoading(false);
       });
-  }, [setQuotesHistory]);
+  };
 
-  const handleKeyPress = useCallback(
-    (event: KeyboardEvent) => {
-      switch (event.key) {
-        case "ArrowLeft":
-          if (quotesHistory && indexQuotesHistory > 0) {
-            const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
-            const _indexQuotesHistory = indexQuotesHistory - 1;
-            setQuote(_quotesHistory[_indexQuotesHistory]);
-            setIndexQuotesHistory(_indexQuotesHistory);
-          }
-          break;
-        case "ArrowRight":
-          if (
-            quotesHistory &&
-            indexQuotesHistory < JSON.parse(quotesHistory).length - 1
-          ) {
-            const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
-            const _indexQuotesHistory = indexQuotesHistory + 1;
-            setQuote(_quotesHistory[_indexQuotesHistory]);
-            setIndexQuotesHistory(_indexQuotesHistory);
-          } else {
-            getRandomQuote();
-          }
-          break;
-        case "d":
-          if (pauseCountdown) {
-            startCountdown();
-          } else {
-            stopCountdown();
-          }
-          setPauseCountdown(!pauseCountdown);
-          break;
-        default:
-          break;
-      }
-    },
-    [
-      quotesHistory,
-      indexQuotesHistory,
-      getRandomQuote,
-      pauseCountdown,
-      startCountdown,
-      stopCountdown,
-    ]
-  );
+  const handleKeyPress = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case "ArrowLeft":
+        if (quotesHistory && indexQuotesHistory > 0) {
+          const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
+          const _indexQuotesHistory = indexQuotesHistory - 1;
+          setQuote(_quotesHistory[_indexQuotesHistory]);
+          setIndexQuotesHistory(_indexQuotesHistory);
+        }
+        break;
+      case "ArrowRight":
+        if (
+          quotesHistory &&
+          indexQuotesHistory < JSON.parse(quotesHistory).length - 1
+        ) {
+          const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
+          const _indexQuotesHistory = indexQuotesHistory + 1;
+          setQuote(_quotesHistory[_indexQuotesHistory]);
+          setIndexQuotesHistory(_indexQuotesHistory);
+        } else {
+          getRandomQuote();
+        }
+        break;
+      case "d":
+        if (pauseCountdown) {
+          startCountdown();
+        } else {
+          stopCountdown();
+        }
+        setPauseCountdown(!pauseCountdown);
+        break;
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress, false);
@@ -123,7 +126,7 @@ export default function Home() {
   useEffect(() => {
     getRandomQuote();
     startCountdown();
-  }, [getRandomQuote, startCountdown]);
+  }, []);
 
   useEffect(() => {
     if (count === 0) {
@@ -131,7 +134,11 @@ export default function Home() {
       resetCountdown();
       startCountdown();
     }
-  }, [count, getRandomQuote, resetCountdown, startCountdown]);
+  }, [count]);
+
+  useEffect(() => {
+    setLocalLastQuote(JSON.stringify(quote));
+  }, [quote]);
 
   return (
     <main

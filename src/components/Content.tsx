@@ -73,7 +73,7 @@ const Content = (props: Props) => {
           className="fas fa-quote-left w-[26px] h-[30px] self-end mt-[10px]"
         />
         <span className="mt-3 text-sm sm:text-[18px] italic text-end mb-5">
-          {`_ ${quote?.author?.authorName}`}
+          {`_ ${quote?.author?.authorName ?? ""}`}
         </span>
         <div className="flex flex-row items-center justify-between">
           <div className="grid grid-flow-col gap-x-5">
