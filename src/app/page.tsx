@@ -4,6 +4,7 @@ import Content from "@/components/Content";
 import Header from "@/components/Header";
 import { COLORS, LOCAL_KEY, SESSION_KEY } from "@/constants";
 import { Quote } from "@/types/quote";
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { useCountdown, useLocalStorage, useSessionStorage } from "usehooks-ts";
@@ -34,23 +35,30 @@ export default function Home() {
 
   const getRandomQuote = useCallback(() => {
     setLoading(true);
-    fetch("https://api.quotable.io/random")
-      .then((res) => res.json())
-      .then((_quote: Quote) => {
-        setQuote(_quote);
-        let _quotesHistory: Quote[];
-        if (quotesHistory) {
-          _quotesHistory = [...JSON.parse(quotesHistory), _quote];
-        } else {
-          _quotesHistory = [_quote];
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/quote/random`)
+      .then((res) => {
+        if (res.status === 200) {
+          setQuote(res.data);
+          let index = 0;
+          setQuotesHistory((quotesHistory) => {
+            let _quotesHistory: Quote[];
+            if (quotesHistory) {
+              _quotesHistory = [...JSON.parse(quotesHistory), res.data];
+            } else {
+              _quotesHistory = [res.data];
+            }
+            index = _quotesHistory.length - 1;
+            return JSON.stringify(_quotesHistory);
+          });
+          setIndexQuotesHistory(index);
         }
-        setQuotesHistory(JSON.stringify(_quotesHistory));
-        setIndexQuotesHistory(_quotesHistory.length - 1);
       })
+      .catch(() => {})
       .finally(() => {
         setLoading(false);
       });
-  }, [quotesHistory, setQuotesHistory]);
+  }, [setQuotesHistory]);
 
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
