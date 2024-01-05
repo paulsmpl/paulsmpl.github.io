@@ -38,16 +38,24 @@ export default function Home() {
     setLocalColor(_color);
   };
 
-  const getRandomQuote = () => {
+  const getRandomQuote = (newBookId?: number) => {
     setLoading(true);
     let params = {};
 
-    if (localLastQuote) {
+    if (newBookId) {
       params = {
         ...params,
-        currerntQuoteId: JSON.parse(localLastQuote)?.id,
+        newBookId,
       };
+    } else {
+      if (localLastQuote) {
+        params = {
+          ...params,
+          currerntQuoteId: JSON.parse(localLastQuote)?.id,
+        };
+      }
     }
+
     axios
       .get(`${process.env.NEXT_PUBLIC_API_URL}/quote/random`, { params })
       .then((res) => {

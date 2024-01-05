@@ -10,6 +10,7 @@ import {
   logoTwitter,
   volumeMediumOutline,
 } from "ionicons/icons";
+import { memo } from "react";
 import { toast } from "react-toastify";
 import Search from "./Search";
 
@@ -17,7 +18,7 @@ type Props = {
   color: string;
   loading: boolean;
   quote: Quote | undefined;
-  getRandomQuote: () => void;
+  getRandomQuote: (newBookId?: number) => void;
 };
 
 const Content = (props: Props) => {
@@ -60,7 +61,7 @@ const Content = (props: Props) => {
         <span className="text-3xl font-semibold text-center mb-5">
           Quotes Generator
         </span>
-        <Search />
+        <Search getRandomQuote={getRandomQuote} />
         <FontAwesomeIcon
           icon={faQuoteLeft}
           className="fas fa-quote-left w-[26px] h-[30px]"
@@ -117,7 +118,7 @@ const Content = (props: Props) => {
               }
             )}
             style={{ backgroundColor: color }}
-            onClick={getRandomQuote}
+            onClick={() => getRandomQuote()}
           >
             {loading ? (
               <div className="h-[22px]">
@@ -140,4 +141,4 @@ const Content = (props: Props) => {
   );
 };
 
-export default Content;
+export default memo(Content);

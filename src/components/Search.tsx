@@ -1,35 +1,81 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { LOCAL_KEY, SESSION_KEY } from "@/constants";
 import { Book } from "@/types/book";
+import { Quote } from "@/types/quote";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { IonIcon } from "@ionic/react";
+import axios from "axios";
 import { search } from "ionicons/icons";
-import { Fragment, useState } from "react";
+import { Fragment, memo, useEffect, useState } from "react";
+import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 
-const books = [
-  { id: 1, name: "Opponent Of Silver" },
-  { id: 2, name: "Giants Of Wood" },
-  { id: 3, name: "Swindlers And Wives" },
-  { id: 4, name: "Vultures And Priests" },
-  { id: 5, name: "Will Without Glory" },
-  { id: 6, name: "Moon With A Goal" },
-  { id: 7, name: "Blinded In The Champions" },
-  { id: 8, name: "Whispers In The City" },
-];
+type Props = {
+  getRandomQuote: (newBookId: number) => void;
+};
 
-const Search = () => {
+const Search = (props: Props) => {
+  const { getRandomQuote } = props;
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [books, setBooks] = useState<Book[]>([]);
   const [selected, setSelected] = useState<Book>(books[0]);
   const [query, setQuery] = useState<string>("");
+  const [localLastQuote, setLocalLastQuote] = useLocalStorage(
+    LOCAL_KEY.LAST_QUOTE,
+    ""
+  );
+  const [_, setQuotesHistory] = useSessionStorage(SESSION_KEY.QUOTES, "");
 
   const filteredBook =
     query === ""
       ? books
       : books.filter((book) =>
-          book.name
+          book.bookName
             .toLowerCase()
             .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, ""))
         );
+
+  const getSelectedBook = () => {
+    if (localLastQuote) {
+      const lastQuote: Quote = JSON.parse(localLastQuote);
+      if (lastQuote?.book) {
+        setSelected(lastQuote?.book);
+      }
+    }
+  };
+
+  const getBooks = () => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/book/all`)
+      .then((res) => {
+        if (res.status === 200) {
+          setBooks(res.data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getBooks();
+  }, []);
+
+  useEffect(() => {
+    getSelectedBook();
+  }, [localLastQuote]);
+
+  useEffect(() => {
+    if (localLastQuote) {
+      const lastQuote: Quote = JSON.parse(localLastQuote);
+      if (lastQuote?.bookId != selected?.id) {
+        setLocalLastQuote("");
+        setQuotesHistory("");
+        getRandomQuote(selected?.id);
+      }
+    }
+  }, [selected]);
 
   return (
     <>
@@ -38,7 +84,7 @@ const Search = () => {
         onClick={() => setIsOpen(true)}
       >
         <span className="text-[18px] font-bold sm:text-xl my-[10px] mr-[10px]">
-          {selected.name}
+          {selected?.bookName ?? ""}
         </span>
         <IonIcon
           icon={search}
@@ -66,7 +112,7 @@ const Search = () => {
                   <div className="relative w-full cursor-default  rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                     <Combobox.Input
                       className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                      displayValue={(book: Book) => book.name}
+                      displayValue={(book: Book) => book.bookName}
                       onChange={(event) => setQuery(event.target.value)}
                     />
                     <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -108,7 +154,7 @@ const Search = () => {
                                     selected ? "font-medium" : "font-normal"
                                   }`}
                                 >
-                                  {book.name}
+                                  {book.bookName}
                                 </span>
                                 {selected ? (
                                   <span
@@ -139,4 +185,4 @@ const Search = () => {
   );
 };
 
-export default Search;
+export default memo(Search);
