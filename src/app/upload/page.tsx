@@ -1,7 +1,8 @@
 "use client";
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
+import axios from "axios";
 import { useRef, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 const Upload = () => {
   const ref = useRef<HTMLInputElement>(null);
@@ -16,7 +17,48 @@ const Upload = () => {
     setSelectedFiles(files);
   };
 
-  const onSave = () => {};
+  const onSave = () => {
+    const formData = new FormData();
+    formData.append("file", selectedFiles[0]);
+    axios
+      .post(`${process.env.NEXT_PUBLIC_API_URL}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setSelectedFiles([]);
+          toast("Update successful", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            type: "success",
+            icon: true,
+          });
+        }
+      })
+      .catch(() => {
+        toast("Update failed", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          type: "error",
+          icon: true,
+        });
+      })
+      .finally(() => {});
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between relative bg-gray-500">
