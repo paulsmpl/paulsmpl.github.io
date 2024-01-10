@@ -80,10 +80,10 @@ const Search = (props: Props) => {
   return (
     <>
       <div
-        className="flex flex-row items-center self-end cursor-pointer"
+        className="flex flex-row items-center justify-end self-end cursor-pointer w-4/5"
         onClick={() => setIsOpen(true)}
       >
-        <span className="text-[18px] font-bold sm:text-xl my-[10px] mr-[10px]">
+        <span className="text-[18px] font-bold sm:text-xl my-[10px] mr-[10px] text-right">
           {selected?.bookName ?? ""}
         </span>
         <IonIcon
