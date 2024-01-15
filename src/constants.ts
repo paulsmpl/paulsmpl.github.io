@@ -19,3 +19,5 @@ export const LOCAL_KEY = {
 export const SESSION_KEY = {
   QUOTES: "QUOTES",
 };
+
+export const NEXT_PUBLIC_API_URL = "http://localhost:9000";
