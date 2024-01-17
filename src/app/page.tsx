@@ -45,6 +45,7 @@ export default function Home() {
 
   const getRandomQuote = (newBookId?: number) => {
     setLoading(true);
+    setQuote(undefined);
     let params = {};
 
     if (newBookId) {
