@@ -36,7 +36,7 @@ export default function Home() {
   const [indexQuotesHistory, setIndexQuotesHistory] = useState<number>(
     quotesHistory ? JSON.parse(quotesHistory).length - 1 : 0
   );
-  const [pauseCountdown, setPauseCountdown] = useState<boolean>(false);
+  const [pauseCountdown, setPauseCountdown] = useState<boolean>(true);
 
   const onChangeColor = (_color: string) => {
     setColor(_color);
@@ -138,7 +138,6 @@ export default function Home() {
 
   useEffect(() => {
     getRandomQuote();
-    startCountdown();
   }, []);
 
   useEffect(() => {
