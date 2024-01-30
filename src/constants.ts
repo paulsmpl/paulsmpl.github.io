@@ -20,4 +20,4 @@ export const SESSION_KEY = {
   QUOTES: "QUOTES",
 };
 
-export const NEXT_PUBLIC_API_URL = "http://kobo-quotes.simplicia.co:9000";
+export const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://kobo-quotes.simplicia.co:9000";
