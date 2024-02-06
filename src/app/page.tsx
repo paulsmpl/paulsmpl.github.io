@@ -36,7 +36,13 @@ export default function Home() {
   const [indexQuotesHistory, setIndexQuotesHistory] = useState<number>(
     quotesHistory ? JSON.parse(quotesHistory).length - 1 : 0
   );
-  const [pauseCountdown, setPauseCountdown] = useState<boolean>(false);
+  const [enabledSlideshow, setEnabledSlideshow] = useLocalStorage(
+    LOCAL_KEY.ENABLED_SLIDESHOW,
+    "0"
+  );
+  const [pauseCountdown, setPauseCountdown] = useState<boolean>(
+    enabledSlideshow == "0"
+  );
 
   const onChangeColor = (_color: string) => {
     setColor(_color);
@@ -45,6 +51,7 @@ export default function Home() {
 
   const getRandomQuote = (newBookId?: number) => {
     setLoading(true);
+    setQuote(undefined);
     let params = {};
 
     if (newBookId) {
@@ -56,7 +63,7 @@ export default function Home() {
       if (localLastQuote) {
         params = {
           ...params,
-          currerntQuoteId: JSON.parse(localLastQuote)?.id,
+          currentQuoteId: JSON.parse(localLastQuote)?.id,
         };
       }
     }
@@ -80,7 +87,14 @@ export default function Home() {
           setIndexQuotesHistory(index);
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        if (err && err.response && err.response.status === 404) {
+          const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
+          const _indexQuotesHistory = 0;
+          setQuote(_quotesHistory[_indexQuotesHistory]);
+          setIndexQuotesHistory(_indexQuotesHistory);
+        }
+      })
       .finally(() => {
         setLoading(false);
       });
@@ -138,7 +152,6 @@ export default function Home() {
 
   useEffect(() => {
     getRandomQuote();
-    startCountdown();
   }, []);
 
   useEffect(() => {
@@ -152,6 +165,12 @@ export default function Home() {
   useEffect(() => {
     setLocalLastQuote(JSON.stringify(quote));
   }, [quote]);
+
+  useEffect(() => {
+    if (enabledSlideshow == "1") {
+      startCountdown();
+    }
+  }, [enabledSlideshow]);
 
   return (
     <main
