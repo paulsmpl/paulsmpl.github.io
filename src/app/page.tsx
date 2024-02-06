@@ -63,7 +63,7 @@ export default function Home() {
       if (localLastQuote) {
         params = {
           ...params,
-          currerntQuoteId: JSON.parse(localLastQuote)?.id,
+          currentQuoteId: JSON.parse(localLastQuote)?.id,
         };
       }
     }
@@ -87,7 +87,14 @@ export default function Home() {
           setIndexQuotesHistory(index);
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        if (err && err.response && err.response.status === 404) {
+          const _quotesHistory: Quote[] = JSON.parse(quotesHistory);
+          const _indexQuotesHistory = 0;
+          setQuote(_quotesHistory[_indexQuotesHistory]);
+          setIndexQuotesHistory(_indexQuotesHistory);
+        }
+      })
       .finally(() => {
         setLoading(false);
       });
