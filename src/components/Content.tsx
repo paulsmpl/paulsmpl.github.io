@@ -56,8 +56,8 @@ const Content = (props: Props) => {
   };
 
   return (
-    <div className="flex h-screen">
-      <div className="m-auto w-[90%] sm:w-[598px] p-5 rounded-[10px] flex flex-col justify-center bg-[rgba(255,255,255,0.2)] backdrop-blur-[1.5px] shadow-[0_8px_32px_0px_rgba(31,38,135,0.37)] border border-[rgba(255,255,255,0.18)]">
+    <div className="flex h-screen w-screen">
+      <div className="m-auto w-[90%] sm:w-9/12 p-5 rounded-[10px] flex flex-col justify-center bg-[rgba(255,255,255,0.2)] backdrop-blur-[1.5px] shadow-[0_8px_32px_0px_rgba(31,38,135,0.37)] border border-[rgba(255,255,255,0.18)]">
         <span className="text-3xl font-semibold text-center mb-5">
           Quotes Generator
         </span>
