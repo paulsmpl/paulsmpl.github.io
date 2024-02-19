@@ -2,12 +2,7 @@
 "use client";
 import Colors from "@/components/Colors";
 import Content from "@/components/Content";
-import {
-  COLORS,
-  LOCAL_KEY,
-  NEXT_PUBLIC_API_URL,
-  SESSION_KEY,
-} from "@/constants";
+import { COLORS, LOCAL_KEY, SESSION_KEY } from "@/constants";
 import { Quote } from "@/types/quote";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -68,7 +63,7 @@ export default function Home() {
     }
 
     axios
-      .get(`${NEXT_PUBLIC_API_URL}/quote/random`, { params })
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/quote/random`, { params })
       .then((res) => {
         if (res.status === 200) {
           setQuote(res.data);
