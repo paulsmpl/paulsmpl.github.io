@@ -21,4 +21,5 @@ export const SESSION_KEY = {
   QUOTES: "QUOTES",
 };
 
-export const NEXT_PUBLIC_API_URL = "https://kobo-quotes.simplicia.co:445/api";
+export const NEXT_PUBLIC_API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://kobo-quotes.simplicia.co:445/api";

@@ -30,18 +30,23 @@ const Search = (props: Props) => {
   const filteredBook =
     query === ""
       ? books
-      : books.filter((book) =>
-          book.bookName
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(query.toLowerCase().replace(/\s+/g, ""))
+      : books.filter(
+          (book) =>
+            book?.bookName
+              .toLowerCase()
+              .replace(/\s+/g, "")
+              .includes(query.toLowerCase().replace(/\s+/g, "")) ||
+            book?.author?.authorName
+              .toLowerCase()
+              .replace(/\s+/g, "")
+              .includes(query.toLowerCase().replace(/\s+/g, ""))
         );
 
   const getSelectedBook = () => {
     if (localLastQuote) {
       const lastQuote: Quote = JSON.parse(localLastQuote);
       if (lastQuote?.book) {
-        setSelected(lastQuote?.book);
+        setSelected({ ...lastQuote?.book, author: lastQuote?.author });
       }
     }
   };
@@ -100,7 +105,7 @@ const Search = (props: Props) => {
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 w-screen overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4">
-            <Dialog.Panel className="mx-auto w-[90%] sm:w-[500px] rounded bg-white p-6 text-left align-middle shadow-xl transition-all">
+            <Dialog.Panel className="mx-auto w-[90%] sm:w-7/12 rounded bg-white p-6 text-left align-middle shadow-xl transition-all">
               <Dialog.Title
                 as="h3"
                 className="text-lg font-medium leading-6 text-gray-900 mb-3"
@@ -112,7 +117,9 @@ const Search = (props: Props) => {
                   <div className="relative w-full cursor-default  rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                     <Combobox.Input
                       className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                      displayValue={(book: Book) => book.bookName}
+                      displayValue={(book: Book) =>
+                        `${book?.author?.authorName ?? ""} - ${book?.bookName}`
+                      }
                       onChange={(event) => setQuery(event.target.value)}
                     />
                     <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -154,7 +161,9 @@ const Search = (props: Props) => {
                                     selected ? "font-medium" : "font-normal"
                                   }`}
                                 >
-                                  {book.bookName}
+                                  {`${book?.author?.authorName ?? ""} - ${
+                                    book?.bookName
+                                  }`}
                                 </span>
                                 {selected ? (
                                   <span
