@@ -2,7 +2,6 @@
 "use client";
 import Colors from "@/components/Colors";
 import Content from "@/components/Content";
-import Header from "@/components/Header";
 import {
   COLORS,
   LOCAL_KEY,
@@ -177,7 +176,6 @@ export default function Home() {
       className="flex min-h-screen flex-col items-center justify-between relative"
       style={{ backgroundColor: color }}
     >
-      <Header />
       <Content
         color={color}
         loading={loading}
