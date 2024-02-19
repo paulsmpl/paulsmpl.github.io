@@ -1,5 +1,4 @@
 "use client";
-import { NEXT_PUBLIC_API_URL } from "@/constants";
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useRef, useState } from "react";
@@ -22,7 +21,7 @@ const Upload = () => {
     const formData = new FormData();
     formData.append("file", selectedFiles[0]);
     axios
-      .post(`${NEXT_PUBLIC_API_URL}/upload`, formData, {
+      .post(`${process.env.NEXT_PUBLIC_API_URL}/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

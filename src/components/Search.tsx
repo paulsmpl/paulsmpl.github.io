@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { LOCAL_KEY, NEXT_PUBLIC_API_URL, SESSION_KEY } from "@/constants";
+import { LOCAL_KEY, SESSION_KEY } from "@/constants";
 import { Book } from "@/types/book";
 import { Quote } from "@/types/quote";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -53,7 +53,7 @@ const Search = (props: Props) => {
 
   const getBooks = () => {
     axios
-      .get(`${NEXT_PUBLIC_API_URL}/book/all`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/book/all`)
       .then((res) => {
         if (res.status === 200) {
           setBooks(res.data);
